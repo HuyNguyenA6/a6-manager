@@ -47,5 +47,19 @@ RUN npm install
 # Build frontend assets
 RUN npm run build
 
+# Ensure required Laravel cache directories exist
+RUN mkdir -p storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+ && chmod -R 775 storage bootstrap/cache \
+ && chown -R www-data:www-data storage bootstrap/cache
+
+ RUN php artisan config:clear \
+ && php artisan cache:clear \
+ && php artisan route:clear \
+ && php artisan view:clear
+
 # Start both services
 CMD ["/usr/bin/supervisord"]
