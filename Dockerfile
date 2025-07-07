@@ -37,10 +37,5 @@ EXPOSE 80
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN php artisan config:clear \
- && php artisan cache:clear \
- && php artisan route:clear \
- && php artisan view:clear
-
 # Start both services
 CMD ["/usr/bin/supervisord"]
