@@ -56,10 +56,5 @@ RUN mkdir -p storage/framework/cache \
  && chmod -R 775 storage bootstrap/cache \
  && chown -R www-data:www-data storage bootstrap/cache
 
-RUN php artisan config:clear \
- && php artisan cache:clear \
- && php artisan route:clear \
- && php artisan view:clear
-
 # Start both services
 CMD ["/usr/bin/supervisord"]
