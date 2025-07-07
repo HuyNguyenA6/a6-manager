@@ -33,5 +33,9 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Expose HTTP
 EXPOSE 80
 
+# Redirect Nginx logs to stdout/stderr so Railway can see them
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+ && ln -sf /dev/stderr /var/log/nginx/error.log
+
 # Start both services
 CMD ["/usr/bin/supervisord"]
