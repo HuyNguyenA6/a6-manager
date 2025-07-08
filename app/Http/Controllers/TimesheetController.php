@@ -405,7 +405,7 @@ class TimesheetController extends Controller
     public function _approve(Request $request, $id)
     {
         $timesheet = TimesheetReport::find($id);
-        $current_user = auth()->user;
+        $current_user = auth()->user();
         $input = $request->all();
 
         // Check Authorization
