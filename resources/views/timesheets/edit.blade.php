@@ -7,10 +7,12 @@
 @stop
 
 @section('js') 
+    @vite(['resources/js/app.js'])
     @vite(['resources/js/timesheets/edit.js'])
 @stop
 
 @section('css')
+    @vite(['resources/js/app.css'])
     @vite(['resources/css/util/dataTables.dataTables.min.css'])
     @vite(['resources/css/timesheets/edit.css'])
 @stop
