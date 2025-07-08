@@ -8,7 +8,6 @@
 
 @section('js') 
     @vite(['resources/js/app.js'])
-    @vite(['resources/js/util/dataTables.min.js'])
     @vite(['resources/js/timesheets/index.js'])
 @stop
 

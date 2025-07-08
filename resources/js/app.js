@@ -1,6 +1,5 @@
 // import './bootstrap';
 import './bootstrap.js';
-import './util/dataTables.min.js';
 import 'jquery-ui/dist/jquery-ui';
 import 'bootstrap';
 import 'jquery';
