@@ -197,8 +197,17 @@ class TimesheetReport extends Model
         $request_query = $request_query
             ->where(function ($query) {
                 $query->where('timesheet.user_id', '=', auth()->user()->id)
-                    ->orWhere('timesheet.approver_id', '=', auth()->user()->id)
-                    ->orWhere('profile_approvers.user_id', auth()->user()->id);
+                    ->orWhere(function ($subquery) {
+                        $subquery->where('timesheet.approver_id', '=', auth()->user()->id)
+                            ->where('timesheet.status', '!=', TimesheetConstant::REPORT_STATUS_DRAFT);
+                    })
+                    ->orWhere(function ($subquery) {
+                        $subquery->where('profile_approvers.user_id', '=', auth()->user()->id)
+                            ->where('timesheet.status', '!=', TimesheetConstant::REPORT_STATUS_DRAFT);
+                    });
+                // $query->where('timesheet.user_id', '=', auth()->user()->id)
+                //     ->orWhere('timesheet.approver_id', '=', auth()->user()->id)
+                //     ->orWhere('profile_approvers.user_id', auth()->user()->id);
             });
 
         // if (auth()->user()->hasAnyRole('System Admin', 'Project Manager', 'Project Coordinator', 'Subcontractor Admin')) {
