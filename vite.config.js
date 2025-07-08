@@ -7,7 +7,7 @@ export default defineConfig({
             input: [
                 // CSS
                 'resources/css/app.css',
-                'resources/css/timesheets/app.css',
+                'resources/css/timesheets/edit.css',
                 'resources/css/util/dataTables.dataTables.min.css',
 
                 // JS
