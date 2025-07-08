@@ -1,4 +1,22 @@
-import 'bootstrap';
+import 'bootstrap/dist/js/bootstrap.bundle.js';
+
+import Inputmask from 'inputmask';
+import AirDatepicker from 'air-datepicker';
+import 'air-datepicker/air-datepicker.css';
+import moment from 'moment';
+window.moment = moment;
+
+moment.updateLocale('en', {
+  workinghours: {
+    0: null, // Sunday - closed
+    1: ['09:00:00', '17:00:00'], // Monday
+    2: ['09:00:00', '17:00:00'], // Tuesday
+    3: ['09:00:00', '17:00:00'], // Wednesday
+    4: ['09:00:00', '17:00:00'], // Thursday
+    5: ['09:00:00', '17:00:00'], // Friday
+    6: null // Saturday - closed
+  }
+});
 
 let requestTable = $('#dataTable_request').DataTable({
     "processing": true,
@@ -39,7 +57,36 @@ let requestTable = $('#dataTable_request').DataTable({
 });
 
 $(document).ready(function () {
-    
+    Inputmask('99:99').mask('.clockpicker');
+
+    $('.date-picker').each(function () {
+        new AirDatepicker(this, {
+            autoClose: true,
+            dateFormat: 'dd/MM/yyyy',
+            onShow: () => console.log('Calendar is showing'),
+        });
+    });
+});
+
+function updateTimeDiff() {
+    const startTime = $('#txtDateStart').val() + ' ' + $('#txtTimeStart').val();
+    const endTime = $('#txtDateEnd').val() + ' ' + $('#txtTimeEnd').val();
+
+    const format = 'dd/MM/yyyy HH:mm';
+
+    if (moment(startTime, format).isValid() && moment(endTime, format).isValid()) {
+        let start = moment(startTime, format);
+        let end = moment(endTime, format);
+
+        const diffHours = end.diff(start, 'minutes') / 60;
+        $('#txtHour').val(diffHours.toFixed(1));
+    } else {
+        $('#txtHour').val(0);
+    }
+}
+
+$(document).on('change', '.clockpicker', function() {
+    updateTimeDiff();
 });
 
 $(document).on('click', '.btnEditRequest', function() {
@@ -58,6 +105,12 @@ $(document).on('submit', '.frmTaskType', function() {
 $(document).on('click', '#btnSubmitRequest', function() {
 	submitEditRequest();
 });
+
+$(document).on('click', '.btnApprove', function() {
+    var id = $(this).data('id');
+    showEditRequest(id);
+});
+
 
 function resetEditRequestForm() {
 	$('#frmTaskType').trigger("reset");
@@ -83,11 +136,12 @@ function showEditRequest(id) {
       	},
       	complete: function(data) {
         	if (data.status == 200) {
-          		console.log(data);
+          		console.log(data);                
           		let responseData = data.responseJSON;
+                console.log(responseData.readonly);
           		$('#selectUser').html(responseData.user_select_html);
-          		$('#selectUser').val(responseData.curr_request.user_id);
-          		$('#selectType').val(responseData.curr_request.request_type);
+          		$('#selectUser').val(responseData.curr_request.user_id);                
+          		$('#selectType').val(responseData.curr_request.request_type);                
           		$('#txtLeaveRequestId').val(responseData.curr_request.id);
           		$('#txtDateStart').val(responseData.curr_request.date_start)
           		$('#txtDateEnd').val(responseData.curr_request.date_end)
@@ -95,6 +149,15 @@ function showEditRequest(id) {
           		$('#txtTimeEnd').val(responseData.curr_request.time_end)
           		$('#txtHour').val(responseData.curr_request.hour)
           		$('#txtComment').text(responseData.curr_request.comment)
+
+                $('#selectUser').prop("disabled", responseData.readonly);
+                $('#selectType').prop("disabled", responseData.readonly);
+                $('#txtDateStart').prop("disabled", responseData.readonly);
+                $('#txtDateEnd').prop("disabled", responseData.readonly);
+                $('#txtTimeStart').prop("disabled", responseData.readonly);
+                $('#txtTimeEnd').prop("disabled", responseData.readonly);
+                $('#txtHour').prop("disabled", responseData.readonly);
+                $('#txtComment').prop("readonly", responseData.readonly);
           		modal.modal("show");
         	} else {
           		alert("An error occured. Please refresh the page");

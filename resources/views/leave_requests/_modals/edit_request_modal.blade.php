@@ -19,11 +19,12 @@
                     <div class="form-group">
                         <label for="txtTimeStart" class="required" >Time Start</label>
                         <div class="input-group">
-                            <input type="text" class="date-picker form-control" id="txtDateStart" name="date_start" value="" data-language="en" data-date-format="dd/mm/yyyy" data-time-format='hh:ii' required readonly style="background-color: white">
+                            <input type="text" class="date-picker form-control" id="txtDateStart" name="date_start" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy">
+
                             <div class="input-group-append show-datepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
-                            <input type="text" class="clockpicker form-control" id="txtTimeStart" name="time_start" value="" data-placement="left" data-align="top" data-autoclose="true" required readonly style="background-color: white">
+                            <input type="text" class="clockpicker form-control" id="txtTimeStart" name="time_start" value="" data-placement="left" data-align="top" data-autoclose="true" required style="background-color: white">
                             <div class="input-group-append">
                                 <div class="input-group-text"><i class="fa fa-clock"></i></div>
                             </div>
@@ -37,7 +38,7 @@
                             <div class="input-group-append show-datepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
-                            <input type="text" class="clockpicker form-control" id="txtTimeEnd" name="time_end" value="" data-placement="left" data-align="top" data-autoclose="true" required readonly style="background-color: white">
+                            <input type="text" class="clockpicker form-control" id="txtTimeEnd" name="time_end" value="" data-placement="left" data-align="top" data-autoclose="true" required style="background-color: white">
                             <div class="input-group-append">
                                 <div class="input-group-text"><i class="fa fa-clock"></i></div>
                             </div>
@@ -47,7 +48,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="txtHour">Hours</label>
-                            <input type="text" class="form-control" id="txtHour" name="hour" value="" readonly>
+                            <input type="text" class="form-control" id="txtHour" name="hour" value="">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="type">Type</label>

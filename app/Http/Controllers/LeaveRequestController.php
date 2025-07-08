@@ -75,6 +75,7 @@ class LeaveRequestController extends Controller
 
             // If User => show current user
             $user_select = User::where('id', auth()->user()->id)->get();
+            $readonly = false;
         } else {
             // Show edit form
             $curr_request = LeaveRequest::find($id);
@@ -83,6 +84,7 @@ class LeaveRequestController extends Controller
             $curr_request->date_end = Carbon::createFromFormat('Y-m-d H:i:s', $curr_request->time_end)->format('d/m/Y');
             $curr_request->time_end = Carbon::createFromFormat('Y-m-d H:i:s', $curr_request->time_end)->format('H:i');
             $user_select = User::where('id', $curr_request->user_id)->get();
+            $readonly = true;
         }
 
         $user_select_html = '';
@@ -93,7 +95,8 @@ class LeaveRequestController extends Controller
         $data = [
             'curr_request' => $curr_request,
             'user_select' => $user_select,
-            'user_select_html' => $user_select_html
+            'user_select_html' => $user_select_html,
+            'readonly' => $readonly
         ];
 
         return $data;
@@ -115,14 +118,16 @@ class LeaveRequestController extends Controller
 
         if($data['id']) {
             $curr_request = LeaveRequest::find($data['id']);
+            $curr_request->status = $data['status'];
         } else {
             $curr_request = new LeaveRequest;
+            $curr_request->status = 2;
+            $curr_request->created_by = auth()->user()->id;
         }
         
         foreach ($data as $key => $value) {
             $curr_request->$key = $value;
         }
-
 
         $curr_request->save();
 
