@@ -150,7 +150,9 @@ class LeaveRequest extends Model
         if ($date_input == '1') $date_input = '';
 
         $request_query = $date_query = LeaveRequest::leftJoin('users', 'users.id', '=', 'leave_requests.user_id')
-            ->leftJoin('leave_request_types', 'leave_request_types.id', '=', 'leave_requests.request_type')
+            ->leftJoin('leave_request_types', 'leave_request_types.id', '=', 'leave_requests.request_type')            
+            ->leftJoin('timesheet_profile_approvers as profile_approvers', 'profile_approvers.timesheet_profile_id', 'users.timesheet_profile_id')
+            ->leftJoin('timesheet_profiles as profiles', 'profiles.id', '=', 'users.timesheet_profile_id')
             ->select(
                 'leave_requests.id',
                 'leave_requests.time_start',
@@ -183,7 +185,11 @@ class LeaveRequest extends Model
         // } else if (auth()->user()->hasAnyRole('Subcontractor Manager')) {
         //     $request_query->where('users.company_id', '=', auth()->user()->company_id);
         // } else {
-            $request_query->where('user_id', '=', auth()->user()->id);
+            // $request_query->where('user_id', '=', auth()->user()->id);
+            $request_query->where(function ($query) {
+                $query->where('leave_requests.user_id', '=', auth()->user()->id)
+                    ->orWhere('profile_approvers.user_id', auth()->user()->id);
+            });
         // }
 
         if ($date_input) {
