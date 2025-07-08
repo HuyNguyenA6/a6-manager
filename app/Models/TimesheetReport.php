@@ -131,7 +131,8 @@ class TimesheetReport extends Model
             // if (auth()->user()->can('timesheet.request.approve') && $allow_approve) {
             // if (auth()->user()->can('timesheet.request.approve')) {
             if ($timesheet->status == TimesheetConstant::REPORT_STATUS_SUBMITTED && $timesheet->user_id != $current_user) {
-                $approveButton = "<button class='d-sm-inline-block btn btn-sm btn-success shadow-sm btnApprove' data-id=" . $timesheet->id . " data-toggle='tooltip' data-placement='top' title='Approve Action'><i class='fa fa-check'></i></button>";
+                $viewLink = route('timesheets.view', ['id' => $timesheet->id], false);
+                $approveButton = "<a href='" . $viewLink . "' class='d-sm-inline-block btn btn-sm btn-success shadow-sm btnApprove' data-id=" . $timesheet->id . " data-toggle='tooltip' data-placement='top' title='Approve Action'><i class='fa fa-check'></i></a>";
             }
             // }
 
