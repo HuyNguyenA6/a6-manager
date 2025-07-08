@@ -14,8 +14,6 @@ $(document).ready(function() {
 
   showDates();
   calculatorAll()
-  console.log("Datepicker?", $.fn.datepicker);
-  console.log("jQuery version:", $.fn.jquery);
   // var moment = require("moment");
   var start = new Date();
   start.setHours(9);

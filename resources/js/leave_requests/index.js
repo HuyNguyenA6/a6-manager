@@ -1,8 +1,9 @@
 import 'bootstrap/dist/js/bootstrap.bundle.js';
 
 import Inputmask from 'inputmask';
-import AirDatepicker from 'air-datepicker';
-import 'air-datepicker/air-datepicker.css';
+// import AirDatepicker from 'air-datepicker';
+// import en from 'air-datepicker/locale/en';
+// import 'air-datepicker/air-datepicker.css';
 import moment from 'moment';
 window.moment = moment;
 
@@ -46,14 +47,27 @@ let requestTable = $('#dataTable_request').DataTable({
 
 $(document).ready(function () {
     Inputmask('99:99').mask('.clockpicker');
-
-    $('.date-picker').each(function () {
-        new AirDatepicker(this, {
-            autoClose: true,
-            dateFormat: 'dd/MM/yyyy',
-            onShow: () => console.log('Calendar is showing'),
-        });
+    $(".date-picker").datepicker({
+        dateFormat: "dd/mm/yy",
+        // firstDay: 1, 
+        // beforeShowDay: function(date) {
+        //   const disabledDays = [0, 2, 3, 4, 5, 6]; // Only allow Mondays
+        //   return [disabledDays.indexOf(date.getDay()) === -1];
+        // },
+        // onSelect: function (fd, date) {
+        //   //let selected = moment(date);
+        //   showDates();
+        // }
     });
+
+    // $('.date-picker').each(function () {
+    //     new AirDatepicker(this, {
+    //         locale: en,
+    //         autoClose: true,
+    //         dateFormat: 'dd/MM/yyyy',
+    //         onShow: () => console.log('Calendar is showing'),
+    //     });
+    // });
 });
 
 function updateTimeDiff() {
