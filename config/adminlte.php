@@ -328,27 +328,32 @@ return [
         //     'label_color' => 'success',
         // ],
         ['header' => 'SHIFTS'],
-        [
-            'text' => 'Calendar',
-            'url' => 'calendar',
-            'icon' => 'fas fa-fw fa-calendar',
-        ],
+        // [
+        //     'text' => 'Calendar',
+        //     'url' => 'calendar',
+        //     'icon' => 'fas fa-fw fa-calendar',
+        // ],
         [
             'text' => 'Leave Requests',
             'url' => 'requests',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-envelope',
         ],
         [
             'text' => 'Timesheet',
             'url' => 'timesheets',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-fw fa-clock',
         ],
-        ['header' => 'account_settings'],
         [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
+            'text' => 'Policy',
+            'url' => 'policy',
+            'icon' => 'fas fa-fw fa-file',
         ],
+        // ['header' => 'account_settings'],
+        // [
+        //     'text' => 'profile',
+        //     'url' => 'admin/settings',
+        //     'icon' => 'fas fa-fw fa-user',
+        // ],
         // ['header' => 'labels'],
         // [
         //     'text' => 'important',

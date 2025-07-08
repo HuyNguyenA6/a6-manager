@@ -6,18 +6,6 @@ import 'air-datepicker/air-datepicker.css';
 import moment from 'moment';
 window.moment = moment;
 
-moment.updateLocale('en', {
-  workinghours: {
-    0: null, // Sunday - closed
-    1: ['09:00:00', '17:00:00'], // Monday
-    2: ['09:00:00', '17:00:00'], // Tuesday
-    3: ['09:00:00', '17:00:00'], // Wednesday
-    4: ['09:00:00', '17:00:00'], // Thursday
-    5: ['09:00:00', '17:00:00'], // Friday
-    6: null // Saturday - closed
-  }
-});
-
 let requestTable = $('#dataTable_request').DataTable({
     "processing": true,
     "serverSide": true,
@@ -90,7 +78,7 @@ $(document).on('change', '.clockpicker', function() {
 });
 
 $(document).on('click', '.btnEditRequest', function() {
-	showEditRequest($(this).data('id'));
+	showEditRequest($(this).data('id'), false);
 });
 
 $(document).on('click', '.btnAddRequest', function() {
@@ -108,17 +96,80 @@ $(document).on('click', '#btnSubmitRequest', function() {
 
 $(document).on('click', '.btnApprove', function() {
     var id = $(this).data('id');
-    showEditRequest(id);
+    showEditRequest(id, true);
 });
 
+$(document).on('click', '.btnDelete', function() {
+    var id = $(this).data('id');
+    deleteRequest(id);
+});
+
+$(document).on('click', '#btnApproveRequest', function() {
+    var id = $('#txtLeaveRequestId').val();
+    $.ajax({
+        type: "POST",
+        url: "/requests/update_status",
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            input: {
+                id: id,
+                status: 3
+            }
+        },
+        complete: function(data) {
+            if (data.status == 200) {
+                console.log(data);
+                // let responseData = data.responseJSON;
+
+                requestTable.ajax.reload();
+                resetEditRequestForm();
+                $('#editRequestModal').modal("hide");
+            } else {
+                alert("An error occured. Please refresh the page");
+            }
+        },
+    });
+});
+
+$(document).on('click', '#btnRejectRequest', function() {
+    var id = $('#txtLeaveRequestId').val();
+    $.ajax({
+        type: "POST",
+        url: "/requests/update_status",
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            input: {
+                id: id,
+                status: 4
+            }
+        },
+        complete: function(data) {
+            if (data.status == 200) {
+                console.log(data);
+                // let responseData = data.responseJSON;
+
+                requestTable.ajax.reload();
+                resetEditRequestForm();
+                $('#editRequestModal').modal("hide");
+            } else {
+                alert("An error occured. Please refresh the page");
+            }
+        },
+    });
+});
 
 function resetEditRequestForm() {
 	$('#frmTaskType').trigger("reset");
     $('#txtComment').text('')
 }
 
-function showEditRequest(id) {
+function showEditRequest(id, showApprove) {
 	console.log(id);
+    if(showApprove) {
+        showApprove = 1;
+    } else {
+        showApprove = 0;
+    }
 	if(id) {
 		$('#requestModalTitle').text('Edit Request');
 	} else {
@@ -132,7 +183,8 @@ function showEditRequest(id) {
       	url: "/requests/edit",
       	data: {
       		_token: $('meta[name="csrf-token"]').attr('content'),
-      		id: id
+      		id: id,
+            showApprove: showApprove
       	},
       	complete: function(data) {
         	if (data.status == 200) {
@@ -150,14 +202,18 @@ function showEditRequest(id) {
           		$('#txtHour').val(responseData.curr_request.hour)
           		$('#txtComment').text(responseData.curr_request.comment)
 
-                $('#selectUser').prop("disabled", responseData.readonly);
+                $('#submitForm').html(responseData.submitForm);
+
+                if(id) {
+                    $('#selectUser').prop("disabled", responseData.readonly);
+                }                
                 $('#selectType').prop("disabled", responseData.readonly);
                 $('#txtDateStart').prop("disabled", responseData.readonly);
                 $('#txtDateEnd').prop("disabled", responseData.readonly);
                 $('#txtTimeStart').prop("disabled", responseData.readonly);
                 $('#txtTimeEnd').prop("disabled", responseData.readonly);
                 $('#txtHour').prop("disabled", responseData.readonly);
-                $('#txtComment').prop("readonly", responseData.readonly);
+                $('#txtComment').prop("readonly", responseData.readonly);                
           		modal.modal("show");
         	} else {
           		alert("An error occured. Please refresh the page");
@@ -191,4 +247,25 @@ function submitEditRequest() {
         	}
       	},
     });
+}
+
+function deleteRequest(id) {
+    var cfrm = confirm('Do you want to delete this request?');
+    if (cfrm) {
+        $.ajax({
+            type: "DELETE",
+            url: "/requests/delete",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id: id
+            },
+            complete: function(data) {
+                if (data.status == 200) {
+                    requestTable.ajax.reload();
+                } else {
+                    alert("An error occured. Please refresh the page");
+                }
+            },
+        });
+    }
 }

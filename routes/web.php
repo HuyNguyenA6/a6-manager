@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WikiController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', function () {
@@ -24,6 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/requests/list', [LeaveRequestController::class, 'list'])->name('requests.list');
     Route::post('/requests/edit', [LeaveRequestController::class, 'edit'])->name('requests.edit');
     Route::post('/requests/update', [LeaveRequestController::class, 'update'])->name('requests.update');
+    Route::post('/requests/update_status', [LeaveRequestController::class, 'updateStatus'])->name('requests.updateStatus');
+    Route::delete('/requests/delete', [LeaveRequestController::class, 'delete'])->name('requests.delete');
+
+    // Route::get('/test', [UserController::class, 'test'])->name('test');
+
+    Route::get('/policy', [WikiController::class, 'policy'])->name('wiki.policy');
 
     // Timesheet
     Route::get('/timesheets', [TimesheetController::class, 'index'])->name('timesheets.index');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constant\TimesheetConstant;
 use Illuminate\Http\Request;
 use App\Models\LeaveRequest;
 use App\Models\LeaveRequestType;
@@ -65,6 +66,8 @@ class LeaveRequestController extends Controller
         // Get current request
         $input = $request->all();
         $id = $input['id'] ?? '';
+        $readonly = false;
+        $showApprove = $input['showApprove'];
 
         if (!$id) {
             // Show add new form
@@ -76,6 +79,7 @@ class LeaveRequestController extends Controller
             // If User => show current user
             $user_select = User::where('id', auth()->user()->id)->get();
             $readonly = false;
+            $submitForm = '<a id="btnSubmitRequest" class="btn btn-primary" href="#">Submit</a>';
         } else {
             // Show edit form
             $curr_request = LeaveRequest::find($id);
@@ -84,7 +88,18 @@ class LeaveRequestController extends Controller
             $curr_request->date_end = Carbon::createFromFormat('Y-m-d H:i:s', $curr_request->time_end)->format('d/m/Y');
             $curr_request->time_end = Carbon::createFromFormat('Y-m-d H:i:s', $curr_request->time_end)->format('H:i');
             $user_select = User::where('id', $curr_request->user_id)->get();
-            $readonly = true;
+
+            if($curr_request->status != TimesheetConstant::REPORT_STATUS_REJECTED) {
+                $readonly = true;
+            } else {                
+                $submitForm = '<a id="btnSubmitRequest" class="btn btn-primary" href="#">Submit</a>';
+            }
+
+            // if($curr_request->status == TimesheetConstant::REPORT_STATUS_SUBMITTED) {
+            if($showApprove) {
+                $submitForm = '<a id="btnRejectRequest" class="btn btn-danger" href="#">Reject</a> <a id="btnApproveRequest" class="btn btn-success" href="#">Approve</a>';
+            }
+            // }
         }
 
         $user_select_html = '';
@@ -96,7 +111,8 @@ class LeaveRequestController extends Controller
             'curr_request' => $curr_request,
             'user_select' => $user_select,
             'user_select_html' => $user_select_html,
-            'readonly' => $readonly
+            'readonly' => $readonly,
+            'submitForm' => $submitForm
         ];
 
         return $data;
@@ -118,7 +134,7 @@ class LeaveRequestController extends Controller
 
         if($data['id']) {
             $curr_request = LeaveRequest::find($data['id']);
-            $curr_request->status = $data['status'];
+            $curr_request->status = 2;
         } else {
             $curr_request = new LeaveRequest;
             $curr_request->status = 2;
@@ -130,6 +146,32 @@ class LeaveRequestController extends Controller
         }
 
         $curr_request->save();
+
+        return 1;
+    }
+
+    public function updateStatus(Request $request)
+    {
+        // Get current request
+        $input = $request->all();
+        $data = $input['input'] ?? '';
+    
+        $curr_request = LeaveRequest::find($data['id']);
+        $curr_request->status = $data['status'];
+
+        $curr_request->save();
+
+        return 1;
+    }
+
+    public function delete(Request $request)
+    {
+        // Get current request
+        $input = $request->all();
+        $id = $input['id'] ?? '';
+    
+        $curr_request = LeaveRequest::find($id);
+        $curr_request->delete();
 
         return 1;
     }

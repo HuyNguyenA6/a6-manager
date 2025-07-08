@@ -450,4 +450,44 @@ class TimesheetController extends Controller
 
         return $timesheet;
     }
+
+    /**
+     * Export Timesheet
+     */
+    public function export(Request $request)
+    {
+        $templatePath = public_path(env('TEMPLE_TIMESHEET_REPORT', 'excel-templates/Timesheet_Report_Template.xlsx'));
+        $reader = IOFactory::createReader("Xlsx");
+        $spreadsheet = $reader->load($templatePath);
+
+        // Check authorization
+
+        //Timesheet
+        TimesheetReport::handleExportTimesheetSheet($spreadsheet);
+
+        //Worksheet
+        TimesheetReport::handleExportWorksheetSheet($spreadsheet, $request);
+
+        //Staff
+        TimesheetReport::handleExportStaffSheet($spreadsheet);
+
+        //Status
+        TimesheetReport::handleExportStatusSheet($spreadsheet, $request);
+
+        $report_type = '_timesheet_report';
+        $fileName = date('Y_m_d') . $report_type . '_' . ExportExcelService::_generateSaltFile() . '.xlsx';
+        $importPath = config('filesystems.disks.mobcon.import');
+        Storage::disk('public_uploads')->makeDirectory($importPath);
+        $pathFile = sprintf('%s/%s%s', config('filesystems.disks.public_uploads.root'), $importPath, $fileName);
+
+        $objWriter = new Xlsx($spreadsheet);
+        $objWriter->setPreCalculateFormulas(false);
+        $objWriter->save($pathFile);
+
+        $header = [
+            'Content-Type' => 'application/vnd.ms-excel'
+        ];
+
+        return response()->download($pathFile, $fileName, $header);
+    }
 }

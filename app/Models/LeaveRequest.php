@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use App\Models\LeaveRequestType;
 use Carbon\Carbon;
+use App\Constant\TimesheetConstant;
 // use Spatie\Activitylog\Traits\LogsActivity;
 
 class LeaveRequest extends Model
@@ -88,16 +89,16 @@ class LeaveRequest extends Model
             $nestedData['hour']                = number_format($leave_request->hour, 2);
 
             switch ($leave_request->status) {
-                case '0':
+                case '1':
                     $status_color               = "secondary";
                     break;
-                case '1':
+                case '2':
                     $status_color               = "info";
                     break;
-                case '2':
+                case '3':
                     $status_color               = "success";
                     break;
-                case '3':
+                case '4':
                     $status_color               = "danger";
                     break;
                 default:
@@ -110,18 +111,23 @@ class LeaveRequest extends Model
             $deleteButton = '';
             $approveButton = '';
 
-            if ($leave_request->status == 0) {
+            if ($leave_request->status == TimesheetConstant::REPORT_STATUS_REJECTED) {
                 $editButton = "<a href='#' class='btnEditRequest d-sm-inline-block btn btn-sm btn-primary shadow-sm' data-id='" . $leave_request->id . "' data-toggle='tooltip' data-placement='top' title='Edit'><i class='fas fa-pen'></i></a>";
+            } else {
+                $approveButton = "<button class='d-sm-inline-block btn btn-sm btn-success shadow-sm btnApprove' data-id=" . $leave_request->id . " data-toggle='tooltip' data-placement='top' title='Approve Action'><i class='fa fa-check'></i></button>";
+            }
+
+            if ($leave_request->status != TimesheetConstant::REPORT_STATUS_APPROVED && $leave_request->status != TimesheetConstant::REPORT_STATUS_SUBMITTED) {                
                 $deleteButton = "<button class='btnDelete d-sm-inline-block btn btn-sm btn-danger shadow-sm' data-id=" . $leave_request->id . " data-toggle='tooltip' data-placement='top' title='Delete'><i class='fa fa-trash'></i></button>";
             }
 
             // $allow_approve = auth()->user()->hasRole('System Admin') || $leave_request->user_id != auth()->user()->id ? 1 : 0;
             // if (auth()->user()->can('timesheet.request.approve') && $allow_approve) {
             // if (auth()->user()->can('timesheet.request.approve')) {
-                $approveButton = "<button class='d-sm-inline-block btn btn-sm btn-success shadow-sm btnApprove' data-id=" . $leave_request->id . " data-toggle='tooltip' data-placement='top' title='Approve Action'><i class='fa fa-check'></i></button>";
+                // $approveButton = "<button class='d-sm-inline-block btn btn-sm btn-success shadow-sm btnApprove' data-id=" . $leave_request->id . " data-toggle='tooltip' data-placement='top' title='Approve Action'><i class='fa fa-check'></i></button>";
             // }
 
-            $nestedData['action']               = $editButton . ' ' . $deleteButton . ' ' . $approveButton;
+            $nestedData['action']               = $approveButton . ' ' . $editButton . ' ' . $deleteButton;
             $nestedData['created_at']           = Carbon::createFromFormat('Y-m-d H:i:s', $leave_request->created_at)->format('d/m/Y H:i');;
             $data[] = $nestedData;
         }
