@@ -11,7 +11,7 @@
 @stop
 
 @section('css')
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/global.css'])
 @stop
 
 @section('content')

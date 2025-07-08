@@ -12,7 +12,7 @@
 @stop
 
 @section('css')
-    @vite(['resources/css/app.css'])
+    @vite(['resources/css/global.css'])
     @vite(['resources/css/util/dataTables.dataTables.min.css'])
 @stop
 
